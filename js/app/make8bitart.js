@@ -62,6 +62,7 @@
     $buttonSaveLocal : $('#save-local'),
     $buttonSaveFull : $('#save-full'),
     $buttonSaveSelection : $('#save-selection'),
+    $buttonSavePixelSelection: $('#save-pixel-selection'),
     $buttonSavePixelFull : $('#save-pixel-full'),
     $buttonSaveImgur : $('#save-imgur'),
     $buttonOpenFile : $('#open-file'),
@@ -117,6 +118,8 @@
     paint : false,
     trill : true
   };
+
+  var pixelExportMode = false;
 
   var action = {
     draw : 'draw',
@@ -662,14 +665,21 @@
 
     if ( width && height ) {
       tempCtx.drawImage(DOM.$canvas[0], startX, startY, width, height, 0, 0, width, height);
-      var img = $tempCanvas[0].toDataURL('image/png');
+      var img;
 
       if ( mode === action.save ) {
+        if ( pixelExportMode ) {
+          img = getPixelPNG($tempCanvas[0]);
+        }
+        else {
+          img = $tempCanvas[0].toDataURL('image/png');
+        }
         displayFinishedArt(img);
         DOM.$buttonSaveSelection.click();
         DOM.$saveModalContainer.removeClass(classes.hidden);
       }
       else {
+        img = $tempCanvas[0].toDataURL('image/png');
         clipboard = new Image();
         clipboard.src = img;
 
@@ -1418,6 +1428,12 @@
 
   // save selection of canvas button clicked
   DOM.$buttonSaveSelection.click(function() {
+    pixelExportMode = false;
+    saveSelection();
+  });
+
+  DOM.$buttonSavePixelSelection.click(function() {
+    pixelExportMode = true;
     saveSelection();
   });
 
