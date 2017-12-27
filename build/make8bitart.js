@@ -14,6 +14,7 @@
 
   var classes = {
     selectionCanvas : 'selectionCanvas',
+    pixelCanvas : 'pixelCanvas',
     current: 'current',
     currentTool: 'current-tool',
     dropperMode: 'dropper-mode',
@@ -61,6 +62,7 @@
     $buttonSaveLocal : $('#save-local'),
     $buttonSaveFull : $('#save-full'),
     $buttonSaveSelection : $('#save-selection'),
+    $buttonSavePixelFull : $('#save-pixel-full'),
     $buttonSaveImgur : $('#save-imgur'),
     $buttonOpenFile : $('#open-file'),
     $buttonOpenLocal : $('#open-local'),
@@ -1337,6 +1339,47 @@
 
   /* importing and exporting */
 
+  // helper functions
+  var getPixelPNG = function(canvas) {
+    var ctx = canvas.getContext('2d');
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    // create a temporary canvas to hold a pixel-by-pixel representation of
+    // the current canvas.  each actual pixel will represent one rectangle
+    // (size of which is defined by `pixel.size`), with the color matching
+    // the middle pixel of the associated rectangle.
+    // TODO: if a rectangle has more than one color, blend them rather than
+    // picking the middle.
+
+    DOM.$body.append('<canvas id="' + classes.pixelCanvas + '"></canvas>');
+    var $tempCanvas = $('#' + classes.pixelCanvas);
+    $tempCanvas[0].width = Math.floor(canvas.width / pixel.size);
+    $tempCanvas[0].height = Math.floor(canvas.height / pixel.size);
+    var tempCtx = $tempCanvas[0].getContext('2d');
+    var tempImageData = tempCtx.getImageData(0, 0, $tempCanvas[0].width, $tempCanvas[0].height);
+
+    for (var x = 0; x < $tempCanvas[0].width; x++) {
+      for (var y = 0; y < $tempCanvas[0].height; y++) {
+        for (var i = 0; i < 4; i++) {
+          // Sample the color from approximately the middle of the "pixel"'s
+          // rectangle.
+          var sampleX = Math.floor(x * pixel.size + pixel.size / 2);
+          var sampleY = Math.floor(y * pixel.size + pixel.size / 2);
+
+          // ImageData contains four values (rgba) for each pixel, with the
+          // pixels being represented left to right (x) then up to down (y).
+
+          tempImageData.data[$tempCanvas[0].width * y * 4 + x * 4 + i] = imageData.data[canvas.width * sampleY * 4 + sampleX * 4 + i];
+        }
+      }
+    }
+
+    tempCtx.putImageData(tempImageData, 0, 0);
+    var savedPNG = $tempCanvas[0].toDataURL('image/png');
+    $tempCanvas.remove();
+    return savedPNG;
+  };
+
   // save locally
   DOM.$buttonSaveLocal.click(function() {
     saveToLocalStorageArray();
@@ -1348,6 +1391,11 @@
   // save full canvas
   DOM.$buttonSaveFull.click(function() {
     var savedPNG = DOM.$canvas[0].toDataURL('image/png');
+    displayFinishedArt(savedPNG);
+  });
+
+  DOM.$buttonSavePixelFull.click(function() {
+    var savedPNG = getPixelPNG(DOM.$canvas[0]);
     displayFinishedArt(savedPNG);
   });
 
