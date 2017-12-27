@@ -1380,6 +1380,23 @@
     return savedPNG;
   };
 
+  var saveSelection = function() {
+    if ( mode.save ) {
+      mode.save = false;
+      DOM.$saveInstruction.slideUp();
+      $(this).val(copy.selectionOn);
+      DOM.$overlay.addClass(classes.hidden);
+    }
+    else {
+      resetModes();
+      mode.save = true;
+      DOM.$saveInstruction.slideDown();
+      $(this).val(copy.selectionOff);
+      ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
+      DOM.$overlay.removeClass(classes.hidden);
+    }
+  };
+
   // save locally
   DOM.$buttonSaveLocal.click(function() {
     saveToLocalStorageArray();
@@ -1401,20 +1418,7 @@
 
   // save selection of canvas button clicked
   DOM.$buttonSaveSelection.click(function() {
-    if ( mode.save ) {
-      mode.save = false;
-      DOM.$saveInstruction.slideUp();
-      $(this).val(copy.selectionOn);
-      DOM.$overlay.addClass(classes.hidden);
-    }
-    else {
-      resetModes();
-      mode.save = true;
-      DOM.$saveInstruction.slideDown();
-      $(this).val(copy.selectionOff);
-      ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-      DOM.$overlay.removeClass(classes.hidden);
-    }
+    saveSelection();
   });
 
   // open import local modal
