@@ -1386,7 +1386,17 @@
 
     tempCtx.putImageData(tempImageData, 0, 0);
     var savedPNG = $tempCanvas[0].toDataURL('image/png');
-    $tempCanvas.remove();
+    $tempCanvas[0].toBlob(function(blob) {
+      var form = new FormData();
+      form.set('file', blob, 'test.png');
+      fetch('/led/upload', {
+        method: "POST",
+        body: form
+      }).then(function() {
+        $tempCanvas.remove();
+        fetch('/led/display/test.png', { method: 'POST' });
+      });
+    });
     return savedPNG;
   };
 
