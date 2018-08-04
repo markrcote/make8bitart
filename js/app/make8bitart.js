@@ -4,7 +4,7 @@
 * turn down for #butts
 */
 
- (function($, key, window, document) {
+(function($, key, window, document) {
 
   'use strict';
 
