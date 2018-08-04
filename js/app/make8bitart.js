@@ -61,7 +61,6 @@
     $buttonNewCanvas : $('#new-canvas'),
     $buttonSavePixelFull : $('#save-pixel-full'),
     $buttonClearLed : $('#clear-led'),
-    $buttonSaveImgur : $('#save-imgur'),
     $buttonOpenFile : $('#open-file'),
     $buttonOpenLocal : $('#open-local'),
 
@@ -87,8 +86,6 @@
     $modalExit : $('.modal .ui-hider'),
 
     $saveModalContainer : $('#save-modal-container'),
-    $saveImg : $('#finished-art'),
-    $linkImgur : $('#link-imgur'),
 
     $openLocalModalContainer : $('#open-modal-container'),
     $openFile: $('#open-file'),
@@ -706,13 +703,6 @@
     ctxOverlay.clearRect(rectangleSelection.startX, rectangleSelection.startY, rectangleSelection.w, rectangleSelection.h);
   };
 
-  var displayFinishedArt = function(src) {
-    DOM.$saveImg.attr('src', src);
-    DOM.$saveImg.parent().attr('href', src);
-    DOM.$saveModalContainer.removeClass(classes.hidden);
-    DOM.$saveModalContainer.find('.ui-hider').focus();
-  };
-
   var renderLocalGallery = function() {
     if ( savedCanvasArray.length === 0 ) {
       DOM.$openLocalModalContainer.addClass(classes.hidden);
@@ -776,36 +766,6 @@
       localStorage.make8bitartSavedCanvasArray = JSON.stringify(savedCanvasArray);
     }
   };
-
-  var uploadToImgur = function() {
-    var imgDataURL = DOM.$saveImg.attr('src').replace(/^data:image\/(png|jpg);base64,/, '');
-    $.ajax({
-      method: 'POST',
-      url: 'https://api.imgur.com/3/image',
-      headers: {
-        Authorization: 'Client-ID ' + imgur.clientId,
-      },
-      dataType: 'json',
-      data: {
-        image: imgDataURL,
-        type: 'base64',
-        title: 'made on make8bitart.com',
-        description: 'made on make8bitart.com'
-      },
-      success: function(result) {
-        var directURL = result.data.link;
-        var shareURL = 'https://imgur.com/gallery/' + result.data.id;
-        var imgurHTML = '<p>imgur page: <a target="_blank" href="' + shareURL + '">' + shareURL + '</a><br />' +
-                            'direct image link: <a target="_blank" href="' + directURL + '">' + directURL + '</a></p>';
-        DOM.$linkImgur.html( imgurHTML);
-        DOM.$buttonSaveImgur.addClass(classes.hidden);
-      },
-      error: function(result) {
-        DOM.$linkImgur.text('There was an error saving to Imgur.');
-      }
-    });
-  };
-
 
   /* colors */
 
@@ -1349,7 +1309,6 @@
     }
 
     tempCtx.putImageData(tempImageData, 0, 0);
-    var savedPNG = $tempCanvas[0].toDataURL('image/png');
     $tempCanvas[0].toBlob(function(blob) {
       var form = new FormData();
       form.set('file', blob, 'test.png');
@@ -1361,7 +1320,6 @@
         fetch('/led/display/test.png', { method: 'POST' });
       });
     });
-    return savedPNG;
   };
 
   var clearLed = function() {
@@ -1372,8 +1330,7 @@
 
   // save full canvas
   DOM.$buttonSavePixelFull.click(function() {
-    var savedPNG = getPixelPNG(DOM.$canvas[0]);
-    displayFinishedArt(savedPNG);
+    getPixelPNG(DOM.$canvas[0]);
   });
 
   // clear LED
@@ -1393,8 +1350,6 @@
   // hide save modal container if exit button clicked
   DOM.$modalExit.click(function() {
     DOM.$modalContainers.addClass(classes.hidden);
-    DOM.$linkImgur.html('');
-    DOM.$buttonSaveImgur.removeClass(classes.hidden);
   });
 
   // hide save modal container if clicking outside of modal
@@ -1404,12 +1359,6 @@
       $(this).addClass(classes.hidden);
     }
   });
-
-  // save to imgur
-  DOM.$buttonSaveImgur.click(function() {
-    uploadToImgur();
-  });
-
 
   /* misc */
 
