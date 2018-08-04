@@ -6,7 +6,10 @@
   <link rel="preload" href="/assets/fonts/8bit-Art-Sans-subset.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/VT323-Regular-subset.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="build/make8bitart.min.css" />
-  <link rel="icon" href="assets/favicon.png" />
+  <link rel="icon" href="/assets/favicon.png" />
+  
+  <script src="build/app.min.js" defer></script>
+
 </head>
 
 <!--
@@ -101,7 +104,9 @@
 
     <p>this is an <a href="http://github.com/jennschiffer/make8bitart" title="link to make8bitart repo on github" target="_blank">open source</a> pixel art drawing tool by <a href="http://jennmoney.biz" title="official website of" target="_blank">jennmoneydollars</a>!</p>
 
-    <p>if you make something cool, i wanna see it – tweet me at <a href="http://twitter.com/jennschiffer">@jennschiffer</a>!</p>
+    <p>if you make something cool, i wanna see it – tweet me at <a href="http://twitter.com/jennschiffer" target="_blank">@jennschiffer</a>!</p>
+
+    <p>if you really enjoy this and want to support it, you can do so indirectly by <a href="http://www.blackgirlscode.com/" target="_blank">donating to black girls code</a>!</p>
   </section>
 
   <!--
@@ -173,7 +178,7 @@
       </ul>
 
       <button role="button" class="text-button" id="undo" disabled="disabled">undo</button>
-      <button role="button" class="text-button" id="redo" disabled="disabled" />redo</button>
+      <button role="button" class="text-button" id="redo" disabled="disabled">redo</button>
       <button role="button" class="text-button" id="new-canvas">new canvas</button>
     </div>
 
@@ -246,12 +251,12 @@
 
       <label for="save-local" class="local" id="save-local-form">
         to local storage:<br />
-        <button role="button" class="text-button" id="save-local" class="local">local store</button>
+        <button role="button" class="text-button local" id="save-local">local store</button>
       </label>
 
       <label for="export-pxon" class="pxon" id="export-pxon-form">
         export <a href="http://jennmoney.biz/pxon">pxon</a>:<br />
-        <button role="button" class="text-button" id="export-pxon" class="pxon">export pxon</button>
+        <button role="button" class="text-button pxon" id="export-pxon" >export pxon</button>
       </label>
     </div>
 
@@ -297,7 +302,7 @@
     <div id="pickers">
       <div id="hex-picker">
         <h2>hex value:</h2>
-        <span class="pound">#</span><input type="text" id="hex-color" value="000000" />
+        <span class="pound">#</span><input type="text" id="hex-color" value="000000" autocomplete="off" autocorrect="off" spellcheck="false" />
 
         <button role="button" id="color-dropper" class="icon-button">
           <img src="assets/dropper.png" alt="color dropper" />
@@ -355,7 +360,7 @@
       <a href="#" target="_blank" download="art.png"><img id="finished-art" /></a>
 
       <p>Click or drag your art to your desktop to save!<br />
-        <button role="button" class="text-button"id="save-imgur">Or upload to imgur.com!</button>
+        <button role="button" class="text-button" id="save-imgur">Or upload to imgur.com!</button>
       </p>
       <p id="link-imgur"></p>
     </div>
@@ -406,8 +411,8 @@
              });
   }
 </script>
-<script src="build/app.min.js"></script>
 <script src="https://pmetrics.performancing.com/js" type="text/javascript"></script>
 <script type="text/javascript">try{ clicky.init(15102); }catch(e){}</script>
-<noscript><p><img alt="Performancing Metrics" width="1" height="1" src="//pmetrics.performancing.com/15102ns.gif" /></p></noscript></body>
+<noscript><p><img alt="Performancing Metrics" width="1" height="1" src="//pmetrics.performancing.com/15102ns.gif" /></p></noscript>
+  </body>
 </html>
