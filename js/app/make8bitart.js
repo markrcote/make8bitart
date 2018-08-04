@@ -59,17 +59,12 @@
     $paint : $('#paint'),
 
     $buttonNewCanvas : $('#new-canvas'),
-    $buttonSaveLocal : $('#save-local'),
-    $buttonSaveFull : $('#save-full'),
-    $buttonSaveSelection : $('#save-selection'),
-    $buttonSavePixelSelection: $('#save-pixel-selection'),
     $buttonSavePixelFull : $('#save-pixel-full'),
     $buttonSaveImgur : $('#save-imgur'),
     $buttonOpenFile : $('#open-file'),
     $buttonOpenLocal : $('#open-local'),
 
     $buttonImportPXON : $('#import-pxon'),
-    $buttonExportPXON : $('#export-pxon'),
     $pxonModalContainer : $('#pxon-modal-container'),
 
     $pixelSizeInput : $('.pixel-size-input'),
@@ -570,7 +565,7 @@
       DOM.$hex.val(rgbToHex(pixel.color));
     }
     else if ( mode.save ) {
-      DOM.$buttonSaveSelection.click();
+      alert('error: save-selection functionality disabled');
     }
     else if ( mode.copy || mode.cut ) {
       DOM.$overlay.addClass(classes.hidden);
@@ -668,15 +663,7 @@
       var img;
 
       if ( mode === action.save ) {
-        if ( pixelExportMode ) {
-          img = getPixelPNG($tempCanvas[0]);
-        }
-        else {
-          img = $tempCanvas[0].toDataURL('image/png');
-        }
-        displayFinishedArt(img);
-        DOM.$buttonSaveSelection.click();
-        DOM.$saveModalContainer.removeClass(classes.hidden);
+        alert('error: save-selection functionality disabled');
       }
       else {
         img = $tempCanvas[0].toDataURL('image/png');
@@ -968,30 +955,6 @@
     getFileData(file);
   };
 
-  var exportPXON = function(e) {
-    // FUTURE: show modal for form
-    /*pxon.exif.artist = $('.exif.artist').val();
-    pxon.exif.imageDescription = $('.exif.imageDescription').val();
-    pxon.exif.userComment = $('.exif.userComment').val();
-    pxon.exif.copyright = $('.exif.copyright').val();*/
-
-    // other exif info
-    pxon.exif.software = 'make8bitart.com';
-    pxon.exif.dateTime = new Date();
-    pxon.exif.dateTimeOriginal = ( pxon.exif.dateTimeOriginal ) ? pxon.exif.dateTimeOriginal : pxon.exif.dateTime;
-
-    // pxif
-    pxon.pxif.pixels = drawHistory;
-
-    // open pxon modal
-    DOM.$pxonModalContainer.removeClass(classes.hidden);
-    DOM.$pxonModalContainer.find('.ui-hider').focus();
-
-    var pxonData = JSON.stringify(pxon);
-    DOM.$pxonModalContainer.find('textarea').html(pxonData);
-  };
-
-
   /*** EVENTS ***/
 
   /* general */
@@ -1098,7 +1061,7 @@
       ctxOverlay.clearRect(0, 0, DOM.$overlay.width(), DOM.$overlay.height());
 
       if ( mode.save ) {
-        generateSelection(e, 'save');
+        alert('error: save-selection functionality disabled');
       }
       else if ( mode.copy ) {
         generateSelection(e, 'copy');
@@ -1400,51 +1363,10 @@
     return savedPNG;
   };
 
-  var saveSelection = function() {
-    if ( mode.save ) {
-      mode.save = false;
-      DOM.$saveInstruction.slideUp();
-      $(this).val(copy.selectionOn);
-      DOM.$overlay.addClass(classes.hidden);
-    }
-    else {
-      resetModes();
-      mode.save = true;
-      DOM.$saveInstruction.slideDown();
-      $(this).val(copy.selectionOff);
-      ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-      DOM.$overlay.removeClass(classes.hidden);
-    }
-  };
-
-  // save locally
-  DOM.$buttonSaveLocal.click(function() {
-    saveToLocalStorageArray();
-    renderLocalGallery();
-
-    alert('Your art has been saved locally to your browser. You can see all locally saved art by clicking the "open existing art" button!');
-  });
-
   // save full canvas
-  DOM.$buttonSaveFull.click(function() {
-    var savedPNG = DOM.$canvas[0].toDataURL('image/png');
-    displayFinishedArt(savedPNG);
-  });
-
   DOM.$buttonSavePixelFull.click(function() {
     var savedPNG = getPixelPNG(DOM.$canvas[0]);
     displayFinishedArt(savedPNG);
-  });
-
-  // save selection of canvas button clicked
-  DOM.$buttonSaveSelection.click(function() {
-    pixelExportMode = false;
-    saveSelection();
-  });
-
-  DOM.$buttonSavePixelSelection.click(function() {
-    pixelExportMode = true;
-    saveSelection();
   });
 
   // open import local modal
@@ -1455,9 +1377,6 @@
 
   // import pxon
   DOM.$buttonImportPXON.change(importPXON);
-
-  // export pxon
-  DOM.$buttonExportPXON.click(exportPXON);
 
   // hide save modal container if exit button clicked
   DOM.$modalExit.click(function() {
