@@ -60,6 +60,7 @@
 
     $buttonNewCanvas : $('#new-canvas'),
     $buttonSavePixelFull : $('#save-pixel-full'),
+    $buttonClearLed : $('#clear-led'),
     $buttonSaveImgur : $('#save-imgur'),
     $buttonOpenFile : $('#open-file'),
     $buttonOpenLocal : $('#open-local'),
@@ -1363,10 +1364,21 @@
     return savedPNG;
   };
 
+  var clearLed = function() {
+    fetch('/led/clear', {
+      method: "POST"
+    });
+  };
+
   // save full canvas
   DOM.$buttonSavePixelFull.click(function() {
     var savedPNG = getPixelPNG(DOM.$canvas[0]);
     displayFinishedArt(savedPNG);
+  });
+
+  // clear LED
+  DOM.$buttonClearLed.click(function() {
+    clearLed();
   });
 
   // open import local modal
