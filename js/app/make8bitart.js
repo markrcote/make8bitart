@@ -64,7 +64,6 @@
     $buttonOpenFile : $('#open-file'),
     $buttonOpenLocal : $('#open-local'),
 
-    $buttonImportPXON : $('#import-pxon'),
     $pxonModalContainer : $('#pxon-modal-container'),
 
     $pixelSizeInput : $('.pixel-size-input'),
@@ -234,6 +233,8 @@
 
   var setCanvasSize = function(width, height) {
     // sets canvas width and height
+    width = 64 * pixel.size;
+    height = 32 * pixel.size;
     windowCanvas.width = width - width % pixel.size;
     windowCanvas.height = height - width % pixel.size;
 
@@ -879,43 +880,6 @@
     }
   };
 
-
-  /* pxon */
-
-  var getFileData = function(file) {
-    if ( window.FileReader ) {
-      var fileReader = new FileReader();
-      fileReader.readAsText(file);
-      fileReader.onload = function(data){
-        if (data) {
-          pxon = JSON.parse(data.target.result);
-          historyPointer = undoRedoHistory.length - 1;
-
-          // prefill the export fields
-          /*$('.exif.artist').val(pxon.exif.artist);
-          $('.exif.imageDescription').val(pxon.exif.imageDescription);
-          $('.exif.userComment').val(pxon.exif.userComment);
-          $('.exif.copyright').val(pxon.exif.copyright);*/
-
-          // draw image to reset canvas
-          resetCanvas();
-          pxon.pxif.pixels.forEach(function(e, i, a){
-            drawPixel(e.x, e.y, e.color, e.size );
-          });
-        }
-      };
-      fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
-    }
-    else {
-      alert('Your browser doesn\'t support FileReader, which is required for uploading custom palettes.');
-    }
-  };
-
-  var importPXON = function(e) {
-    var file = $(this).prop('files')[0];
-    getFileData(file);
-  };
-
   /*** EVENTS ***/
 
   /* general */
@@ -1343,9 +1307,6 @@
     DOM.$openLocalModalContainer.removeClass(classes.hidden);
     DOM.$openLocalModalContainer.find('.ui-hider').focus();
   });
-
-  // import pxon
-  DOM.$buttonImportPXON.change(importPXON);
 
   // hide save modal container if exit button clicked
   DOM.$modalExit.click(function() {
