@@ -1275,20 +1275,22 @@
     tempCtx.putImageData(tempImageData, 0, 0);
     $tempCanvas[0].toBlob(function(blob) {
       var form = new FormData();
-      form.set('file', blob, 'test.png');
+      var now = new Date();
+      var filename = 'm8ba_' + now.getTime() + '.png';
+      form.set('file', blob, filename);
       fetch('/led/upload', {
         method: "POST",
         body: form
       }).then(function() {
         $tempCanvas.remove();
-        fetch('/led/display/test.png', { method: 'POST' });
+        fetch('/led/display/' + filename, { method: 'POST' });
       });
     });
   };
 
   var clearLed = function() {
     fetch('/led/clear', {
-      method: "POST"
+      method: 'POST'
     });
   };
 
