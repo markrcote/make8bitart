@@ -11,6 +11,7 @@
   var ctx, pickerPaletteCtx, savedCanvas, savedCanvasArray, clipboard, rectangleSelection, historyPointer, drawPathId, ctxOverlay, colorHistory;
   var undoRedoHistory = [];
   var drawHistory = [];
+  var lastUploadHistoryPointer, lastSaveFilename;
 
   var classes = {
     selectionCanvas : 'selectionCanvas',
@@ -1239,6 +1240,11 @@
 
   // helper functions
   var getPixelPNG = function(canvas) {
+    if (lastSaveFilename !== undefined && lastUploadHistoryPointer == historyPointer) {
+      displayLedImage();
+      return;
+    }
+
     var ctx = canvas.getContext('2d');
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -1276,16 +1282,22 @@
     $tempCanvas[0].toBlob(function(blob) {
       var form = new FormData();
       var now = new Date();
-      var filename = 'm8ba_' + now.getTime() + '.png';
-      form.set('file', blob, filename);
+      lastSaveFilename = 'm8ba_' + now.getTime() + '.png';
+      lastUploadHistoryPointer = historyPointer;
+      form.set('file', blob, lastSaveFilename);
+
       fetch('/led/upload', {
         method: "POST",
-        body: form
+         body: form
       }).then(function() {
         $tempCanvas.remove();
-        fetch('/led/display/' + filename, { method: 'POST' });
+        displayLedImage();
       });
     });
+  };
+
+  var displayLedImage = function() {
+    fetch('/led/display/' + lastSaveFilename, { method: 'POST' });
   };
 
   var clearLed = function() {
@@ -1478,6 +1490,7 @@
   }
 
   historyPointer = -1;
+  lastUploadHistoryPointer = historyPointer;
 
   DOM.$canvas.mousedown(onMouseDown).mouseup(onMouseUp);
   DOM.$overlay.mousedown(onMouseDown).mouseup(onMouseUp);
